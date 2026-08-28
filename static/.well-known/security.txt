@@ -1,4 +1,4 @@
-Contact: https://github.com/Faavilla/faavilla.github.io/issues
+Contact: https://github.com/Faavilla/faavilla.github.io/security/advisories/new
 Expires: 2027-05-03T00:00:00Z
 Preferred-Languages: ko, en
 Canonical: https://faavilla.com/.well-known/security.txt
