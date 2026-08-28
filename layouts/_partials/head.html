@@ -31,8 +31,8 @@
   <!-- unsafe-inline is required by the theme init script and markdown inline styles -->
   <meta http-equiv="Content-Security-Policy" content="
     default-src 'self';
-    script-src 'self' 'unsafe-inline';
-    connect-src 'self';
+    script-src 'self' 'unsafe-inline' https://umami.faavilla.com;
+    connect-src 'self' https://umami.faavilla.com;
     style-src 'self' https://fonts.googleapis.com 'unsafe-inline';
     font-src 'self' https://fonts.gstatic.com;
     img-src 'self';
@@ -88,4 +88,9 @@
       } catch (err) { }
     })();
   </script>
+
+  <!-- Analytics only ships in production; data-domains keeps preview traffic out of the stats -->
+  {{ if eq hugo.Environment "production" }}
+  <script defer src="https://umami.faavilla.com/script.js" data-website-id="df82ee39-2ac9-4024-a769-ee1dd6eaeb06" data-domains="faavilla.com"></script>
+  {{ end }}
 </head>
