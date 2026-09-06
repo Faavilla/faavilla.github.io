@@ -3,6 +3,7 @@ title: Luminkey nova mini 간단 리뷰
 desc: 실용적이고 멋있는 키보드 리뷰
 date: 2026-06-01
 ---
+
 ### 한 줄 느낌
 바라보기만 해도 좋은 키보드.
 

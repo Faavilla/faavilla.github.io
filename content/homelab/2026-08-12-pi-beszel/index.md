@@ -1,6 +1,6 @@
 ---
-title: "라즈베리파이5(5) - Beszel로 성능 모니터링하기"
-desc: "Beszel로 성능 모니터링 기록 남기기"
+title: 라즈베리파이5(5) - Beszel로 성능 모니터링하기
+desc: Beszel로 성능 모니터링 기록 남기기
 date: 2026-08-12
 ---
 
