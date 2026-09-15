@@ -1,0 +1,75 @@
+<!doctype html><html lang=ko><head><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1"><meta name=color-scheme content="light dark"><meta name=theme-color content="#f3f3f1"><link rel=icon href=/favicon.ico sizes=32x32><link rel=icon type=image/svg+xml href=/favicon/favicon.82d7fbbdb6a9a4c59b5304ec75e2b1259dbb1a90663f7d5f517caea6597f2e84.svg><link rel=apple-touch-icon href=/apple-touch-icon.png><link rel=canonical href=https://faavilla.com/homelab/2026-09-13-pi-unbound/><link rel=alternate type=application/rss+xml title=Faavilla href=https://faavilla.com/index.xml><meta name=description content="DNS 조회를 파이에 넘기기"><meta name=referrer content="no-referrer"><meta http-equiv=Content-Security-Policy content="
+    default-src 'self';
+    script-src 'self' 'unsafe-inline' https://umami.faavilla.com;
+    connect-src 'self' https://umami.faavilla.com;
+    style-src 'self' https://fonts.googleapis.com 'unsafe-inline';
+    font-src 'self' https://fonts.gstatic.com;
+    img-src 'self';
+    object-src 'none';
+    base-uri 'self';
+    form-action 'self';
+  "><title>라즈베리파이5(8) - 언바운드 설치하기 | Faavilla</title><meta property="og:url" content="https://faavilla.com/homelab/2026-09-13-pi-unbound/"><meta property="og:type" content="article"><meta property="og:image" content="https://faavilla.com/og-image.png"><meta property="og:image:width" content="1200"><meta property="og:image:height" content="630"><meta property="og:title" content="라즈베리파이5(8) - 언바운드 설치하기"><meta property="og:site_name" content="Faavilla"><meta property="og:description" content="DNS 조회를 파이에 넘기기"><meta property="og:locale" content="ko_KR"><meta name=twitter:card content="summary_large_image"><meta name=twitter:title content="라즈베리파이5(8) - 언바운드 설치하기"><meta name=twitter:description content="DNS 조회를 파이에 넘기기"><meta name=twitter:image content="https://faavilla.com/og-image.png"><link rel=preconnect href=https://fonts.googleapis.com><link rel=preconnect href=https://fonts.gstatic.com crossorigin><link rel=preload as=style href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;600&display=swap" onload='this.onload=null,this.rel="stylesheet"'><noscript><link rel=stylesheet href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;600&display=swap"></noscript><link rel=stylesheet href=/sass/main.min.a7163fb99004e00c00e6e3179f881c5880e9e79c9a6082e0af778fc231ef07df.css><script>(function(){try{const e=localStorage.getItem("theme"),t=e==="dark"||e!=="light"&&window.matchMedia("(prefers-color-scheme: dark)").matches;t&&(document.documentElement.setAttribute("data-theme","dark"),document.querySelector("meta[name=theme-color]").setAttribute("content","#211f1b"))}catch{}})()</script><script defer src=https://umami.faavilla.com/script.js data-website-id=df82ee39-2ac9-4024-a769-ee1dd6eaeb06 data-domains=faavilla.com></script></head><body><header class="layout-container header" aria-label="Site header"><div class=header__item><h1 class=header__brand><a href=/>Faavilla</a></h1><div class=header__actions><a class=header__link href=https://github.com/Faavilla target=_blank rel="noopener noreferrer" aria-label="GitHub (opens in new tab)">GitHub</a>
+<button type=button class=color-mode-btn aria-label="Toggle color mode"></button></div></div><div class=header__line aria-hidden=true></div></header><script src=/js/color-mode-btn.min.0adc37e322a175ac87ff6f1fcbaab3fca41063b660e4f2455e06d81a48f80644.js defer></script><main class="layout-container article" aria-label="Main content"><div class=article__item><a class=article__back-link href=/ aria-label="Go back" onclick="if(history.length>1)return history.back(),!1"><span aria-hidden=true>←</span></a><h2 class=article__title>라즈베리파이5(8) - 언바운드 설치하기</h2><time class=article__date datetime=2026-09-13T10:00:00+09:00>2026-09-13</time></div><section class=article__content><h3 id=언바운드란>언바운드란?</h3><p>간단하게 말해서 DNS 조회를 파이에서 직접 진행하게 됩니다.</p><p>예를 들어 어떤 웹사이트에 접속하면 해당 사이트 IP를 확인하려고 루트, 최상위 도메인부터 네임서버를 거치는데 해당 과정을 파이에서 진행하게 됩니다.</p><hr><h3 id=언바운드-설치>언바운드 설치</h3><p>파이홀에서 권장하는 대로 도커 말고 호스트에 직접 설치했습니다. 마스킹되지 않은 IP들은 공개되도 상관 없는 대역들 입니다.</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl><span class=c1># 설치</span>
+</span></span><span class=line><span class=cl>sudo apt update
+</span></span><span class=line><span class=cl>sudo apt install -y unbound
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=c1># 설정 파일</span>
+</span></span><span class=line><span class=cl>sudo nano /etc/unbound/unbound.conf.d/pihole.conf
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>server:
+</span></span><span class=line><span class=cl>  ip-freebind: yes <span class=c1># 부팅 시 eth0에 IP가 붙기 전에 시작되면 바인딩 실패로 서비스가 죽음</span>
+</span></span><span class=line><span class=cl>  interface: 127.0.0.1
+</span></span><span class=line><span class=cl>  interface: &lt;파이 IP&gt;
+</span></span><span class=line><span class=cl>  port: <span class=m>5335</span>
+</span></span><span class=line><span class=cl>  <span class=k>do</span>-ip4: yes
+</span></span><span class=line><span class=cl>  <span class=k>do</span>-udp: yes
+</span></span><span class=line><span class=cl>  <span class=k>do</span>-tcp: yes
+</span></span><span class=line><span class=cl>  <span class=k>do</span>-ip6: no
+</span></span><span class=line><span class=cl>  prefer-ip6: no
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>  access-control: 127.0.0.0/8 allow
+</span></span><span class=line><span class=cl>  access-control: &lt;내부망 대역&gt; allow
+</span></span><span class=line><span class=cl>  access-control: 172.16.0.0/12 allow
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>  harden-glue: yes
+</span></span><span class=line><span class=cl>  harden-dnssec-stripped: yes
+</span></span><span class=line><span class=cl>  use-caps-for-id: no
+</span></span><span class=line><span class=cl>  edns-buffer-size: <span class=m>1232</span>
+</span></span><span class=line><span class=cl>  prefetch: yes
+</span></span><span class=line><span class=cl>  num-threads: <span class=m>1</span>
+</span></span><span class=line><span class=cl>  module-config: <span class=s2>&#34;validator iterator&#34;</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>  msg-cache-size: 50m
+</span></span><span class=line><span class=cl>  rrset-cache-size: 100m
+</span></span><span class=line><span class=cl>  cache-min-ttl: <span class=m>300</span>
+</span></span><span class=line><span class=cl>  cache-max-ttl: <span class=m>86400</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>  private-address: 192.168.0.0/16
+</span></span><span class=line><span class=cl>  private-address: 10.0.0.0/8
+</span></span><span class=line><span class=cl>  private-address: 172.16.0.0/12
+</span></span><span class=line><span class=cl>  private-address: 169.254.0.0/16
+</span></span><span class=line><span class=cl>  private-address: 127.0.0.0/8
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=c1># 적용</span>
+</span></span><span class=line><span class=cl>sudo unbound-checkconf
+</span></span><span class=line><span class=cl>sudo systemctl restart unbound
+</span></span><span class=line><span class=cl>sudo systemctl <span class=nb>enable</span> unbound
+</span></span><span class=line><span class=cl>sudo ss -tulpn <span class=p>|</span> grep unbound
+</span></span></code></pre></div><h4 id=동작-확인>동작 확인</h4><div class=highlight><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl><span class=c1># 동작 확인, dig 설치</span>
+</span></span><span class=line><span class=cl>sudo apt install -y dnsutils
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=c1># 기본 조회 (pi-hole.net — 파이홀 공식 사이트)</span>
+</span></span><span class=line><span class=cl>dig @127.0.0.1 -p <span class=m>5335</span> pi-hole.net +short
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=c1># 재귀 모드 확인, 루트 네임서버 13개가 나와야 함</span>
+</span></span><span class=line><span class=cl>dig @127.0.0.1 -p <span class=m>5335</span> . NS +short
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=c1># DNSSEC 검증 (verteiltesysteme.net — 테스트 도메인)</span>
+</span></span><span class=line><span class=cl><span class=c1># sigfail: 서명을 일부러 깨뜨려둔 도메인 → SERVFAIL이 나와야 정상</span>
+</span></span><span class=line><span class=cl><span class=c1># 첫 실행은 네임서버를 다 시도하느라 timeout이 먼저 뜰 수 있음, 이어서 한 번 더 실행하면 캐시에서 바로 나옴</span>
+</span></span><span class=line><span class=cl>dig @127.0.0.1 -p <span class=m>5335</span> sigfail.verteiltesysteme.net
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=c1># sigok: 정상 서명 → NOERROR에 ad 플래그가 붙어야 정상</span>
+</span></span><span class=line><span class=cl>dig @127.0.0.1 -p <span class=m>5335</span> sigok.verteiltesysteme.net
+</span></span></code></pre></div><p>마지막 포스트로 파이홀 따로 작성하겠습니다.</p></section><button class=to-top type=button aria-label="Back to top" tabindex=-1>↑</button>
+<script src=/js/to-top.min.627da03c278b034ddcacb563ebdb1733cae793459368dbac77052bb70a5a38cc.js defer></script></main><footer class="layout-container footer" aria-label="Site footer"><div class=footer__line aria-hidden=true></div><div class=footer__item><ul class=unstyled-list><li>Built with <a class=footer__link href=https://gohugo.io target=_blank rel="noopener noreferrer" aria-label="Hugo (opens in new tab)">Hugo</a></li><li>Powered by <a class=footer__link href=https://docs.github.com/ko/pages target=_blank rel="noopener noreferrer" aria-label="GitHub Pages (opens in new tab)">GitHub Pages</a></li></ul></div></footer></body></html>

@@ -1,0 +1,84 @@
+<!doctype html><html lang=ko><head><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1"><meta name=color-scheme content="light dark"><meta name=theme-color content="#f3f3f1"><link rel=icon href=/favicon.ico sizes=32x32><link rel=icon type=image/svg+xml href=/favicon/favicon.82d7fbbdb6a9a4c59b5304ec75e2b1259dbb1a90663f7d5f517caea6597f2e84.svg><link rel=apple-touch-icon href=/apple-touch-icon.png><link rel=canonical href=https://faavilla.com/homelab/2026-09-13-pihole-start/><link rel=alternate type=application/rss+xml title=Faavilla href=https://faavilla.com/index.xml><meta name=description content="가성비는 내다둔 새 기기 장만하기"><meta name=referrer content="no-referrer"><meta http-equiv=Content-Security-Policy content="
+    default-src 'self';
+    script-src 'self' 'unsafe-inline' https://umami.faavilla.com;
+    connect-src 'self' https://umami.faavilla.com;
+    style-src 'self' https://fonts.googleapis.com 'unsafe-inline';
+    font-src 'self' https://fonts.gstatic.com;
+    img-src 'self';
+    object-src 'none';
+    base-uri 'self';
+    form-action 'self';
+  "><title>라즈베리파이5(7) - 파이홀, 언바운드 설치 준비 | Faavilla</title><meta property="og:url" content="https://faavilla.com/homelab/2026-09-13-pihole-start/"><meta property="og:type" content="article"><meta property="og:image" content="https://faavilla.com/og-image.png"><meta property="og:image:width" content="1200"><meta property="og:image:height" content="630"><meta property="og:title" content="라즈베리파이5(7) - 파이홀, 언바운드 설치 준비"><meta property="og:site_name" content="Faavilla"><meta property="og:description" content="가성비는 내다둔 새 기기 장만하기"><meta property="og:locale" content="ko_KR"><meta name=twitter:card content="summary_large_image"><meta name=twitter:title content="라즈베리파이5(7) - 파이홀, 언바운드 설치 준비"><meta name=twitter:description content="가성비는 내다둔 새 기기 장만하기"><meta name=twitter:image content="https://faavilla.com/og-image.png"><link rel=preconnect href=https://fonts.googleapis.com><link rel=preconnect href=https://fonts.gstatic.com crossorigin><link rel=preload as=style href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;600&display=swap" onload='this.onload=null,this.rel="stylesheet"'><noscript><link rel=stylesheet href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;600&display=swap"></noscript><link rel=stylesheet href=/sass/main.min.a7163fb99004e00c00e6e3179f881c5880e9e79c9a6082e0af778fc231ef07df.css><script>(function(){try{const e=localStorage.getItem("theme"),t=e==="dark"||e!=="light"&&window.matchMedia("(prefers-color-scheme: dark)").matches;t&&(document.documentElement.setAttribute("data-theme","dark"),document.querySelector("meta[name=theme-color]").setAttribute("content","#211f1b"))}catch{}})()</script><script defer src=https://umami.faavilla.com/script.js data-website-id=df82ee39-2ac9-4024-a769-ee1dd6eaeb06 data-domains=faavilla.com></script></head><body><header class="layout-container header" aria-label="Site header"><div class=header__item><h1 class=header__brand><a href=/>Faavilla</a></h1><div class=header__actions><a class=header__link href=https://github.com/Faavilla target=_blank rel="noopener noreferrer" aria-label="GitHub (opens in new tab)">GitHub</a>
+<button type=button class=color-mode-btn aria-label="Toggle color mode"></button></div></div><div class=header__line aria-hidden=true></div></header><script src=/js/color-mode-btn.min.0adc37e322a175ac87ff6f1fcbaab3fca41063b660e4f2455e06d81a48f80644.js defer></script><main class="layout-container article" aria-label="Main content"><div class=article__item><a class=article__back-link href=/ aria-label="Go back" onclick="if(history.length>1)return history.back(),!1"><span aria-hidden=true>←</span></a><h2 class=article__title>라즈베리파이5(7) - 파이홀, 언바운드 설치 준비</h2><time class=article__date datetime=2026-09-13T09:00:00+09:00>2026-09-13</time></div><section class=article__content><h3 id=파이홀-언바운드를-위한-새-기기>파이홀, 언바운드를 위한 새 기기</h3><p>가성비를 따지는 프로젝트는 아니고 네트워크에 관련되어 있다 보니 기존 파이와 다른 파이에 올리는게 좋을거 같아서 파이5 1GB 모델로 구해서 조립했습니다.</p><p><img src=/homelab/2026-09-13-pihole-start/pi5-1gb.webp alt=Pi5-1gb width=760 height=569 loading=lazy decoding=async>
+<img src=/homelab/2026-09-13-pihole-start/pi-fan.webp alt=Pi-fan width=557 height=417 loading=lazy decoding=async></p><p>일렉트로쿠키 케이스 + 쿨러 + M.2 HAT까지 한번에 포함된 구성품으로 약 3만원 중반대에 구매했는데 가성비는 매우 좋지만 단차가 살짝 아쉽고, 나사탭? 이 살짝 무른 느낌이었습니다. 위 사진처럼 써멀패드도 딱 맞기 보다는 살짝 튀어나온것도 보였습니다.</p><p>추후에 케이스랑 쿨러, 햇은 교체해볼 생각입니다.</p><hr><h3 id=파이-ip-설정>파이 IP 설정</h3><p>먼저 파이에 고정 IP부터 할당하고 진행합니다.</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl><span class=c1># 연결 이름 확인</span>
+</span></span><span class=line><span class=cl>nmcli connection show
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=c1># 공유기에서 먼저 고정 IP 할당했고, 게이트웨이는 공유기 IP로 넣었습니다</span>
+</span></span><span class=line><span class=cl><span class=c1># 1.1.1.1는 클라우드플레어 DNS, 9.9.9.9는 Quad9 DNS</span>
+</span></span><span class=line><span class=cl>sudo nmcli connection modify <span class=s2>&#34;조회한 이름&#34;</span> <span class=se>\
+</span></span></span><span class=line><span class=cl>  ipv4.method manual <span class=se>\
+</span></span></span><span class=line><span class=cl>  ipv4.addresses &lt;파이 고정 IP&gt; <span class=se>\
+</span></span></span><span class=line><span class=cl>  ipv4.gateway &lt;공유기 IP&gt; <span class=se>\
+</span></span></span><span class=line><span class=cl>  ipv4.dns <span class=s2>&#34;1.1.1.1,9.9.9.9&#34;</span> <span class=se>\
+</span></span></span><span class=line><span class=cl>  ipv6.method disabled
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>sudo nmcli connection down <span class=s2>&#34;조회한 이름&#34;</span> <span class=o>&amp;&amp;</span> <span class=se>\
+</span></span></span><span class=line><span class=cl>sudo nmcli connection up <span class=s2>&#34;조회한 이름&#34;</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=c1># 설정 확인, 파이 유선은 보통 eth0</span>
+</span></span><span class=line><span class=cl>ip -4 addr show eth0
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=c1># 와이파이, 블루투스 비활성화, 메모리 조금이라도 절약하게</span>
+</span></span><span class=line><span class=cl>sudo nano /boot/firmware/config.txt
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=c1># [all] 아래 해당 내용 입력</span>
+</span></span><span class=line><span class=cl><span class=nv>dtoverlay</span><span class=o>=</span>disable-wifi
+</span></span><span class=line><span class=cl><span class=nv>dtoverlay</span><span class=o>=</span>disable-bt
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=c1># 메모리 컨트롤러 활성, 도커 메모리 제한용</span>
+</span></span><span class=line><span class=cl>sudo nano /boot/firmware/cmdline.txt
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=c1># 중요 : 아래 내용이 줄바꿈 없이, 공백 한칸 뒤 작성돼야함</span>
+</span></span><span class=line><span class=cl><span class=c1># 잘못 입력되면 부팅 안될수 있음</span>
+</span></span><span class=line><span class=cl><span class=nv>cgroup_enable</span><span class=o>=</span>memory <span class=nv>cgroup_memory</span><span class=o>=</span><span class=m>1</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=c1># 재부팅 후 확인</span>
+</span></span><span class=line><span class=cl>sudo reboot
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>cat /sys/fs/cgroup/cgroup.controllers
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=c1># 와이파이 꺼졌으면 아무것도 안나옴</span>
+</span></span><span class=line><span class=cl>ip link show <span class=p>|</span> grep wlan
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=c1># ssh 보안 강화</span>
+</span></span><span class=line><span class=cl>sudo nano /etc/ssh/sshd_config
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=c1># PermitRootLogin 검색 후 주석 해제, 값 no로 변경</span>
+</span></span><span class=line><span class=cl>PermitRootLogin no
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=c1># ssh재시작</span>
+</span></span><span class=line><span class=cl>sudo systemctl restart ssh
+</span></span></code></pre></div><hr><h3 id=ufw-방화벽-설정>ufw 방화벽 설정</h3><p>스킵해도 상관은 없겠지만 저는 해두는 편입니다.</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl><span class=c1># 설치</span>
+</span></span><span class=line><span class=cl>sudo apt install -y ufw
+</span></span><span class=line><span class=cl>sudo ufw default deny incoming
+</span></span><span class=line><span class=cl>sudo ufw default allow outgoing
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=c1># 기본 설정</span>
+</span></span><span class=line><span class=cl>sudo ufw allow from &lt;내부망 대역&gt; to any port <span class=m>22</span> proto tcp
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=c1># 파이홀이 53번 포트로 DNS 요청을 받음</span>
+</span></span><span class=line><span class=cl>sudo ufw allow from &lt;내부망 대역&gt; to any port <span class=m>53</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=c1># 파이홀 컨테이너가 호스트 LAN 주소로 5335를 물어보는데</span>
+</span></span><span class=line><span class=cl><span class=c1># 이 규칙이 없으면 ufw 기본 deny에 걸려 timeout 남</span>
+</span></span><span class=line><span class=cl><span class=c1># 172.16.0.0/12 는 노출되도 상관 없는 도커 대역임</span>
+</span></span><span class=line><span class=cl>sudo ufw allow from 172.16.0.0/12 to any port <span class=m>5335</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=c1># Beszel 모니터링용, 없으면 설정 필요 X</span>
+</span></span><span class=line><span class=cl>sudo ufw allow from &lt;다른 파이 IP&gt; to any port <span class=m>45876</span> proto tcp
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=c1># 활성화</span>
+</span></span><span class=line><span class=cl>sudo ufw <span class=nb>enable</span>
+</span></span><span class=line><span class=cl>sudo ufw status verbose
+</span></span></code></pre></div><p>내용이 길어져서 다음 포스트에서 언바운드부터 이어가도록 하겠습니다.</p></section><button class=to-top type=button aria-label="Back to top" tabindex=-1>↑</button>
+<script src=/js/to-top.min.627da03c278b034ddcacb563ebdb1733cae793459368dbac77052bb70a5a38cc.js defer></script></main><footer class="layout-container footer" aria-label="Site footer"><div class=footer__line aria-hidden=true></div><div class=footer__item><ul class=unstyled-list><li>Built with <a class=footer__link href=https://gohugo.io target=_blank rel="noopener noreferrer" aria-label="Hugo (opens in new tab)">Hugo</a></li><li>Powered by <a class=footer__link href=https://docs.github.com/ko/pages target=_blank rel="noopener noreferrer" aria-label="GitHub Pages (opens in new tab)">GitHub Pages</a></li></ul></div></footer></body></html>
