@@ -12,8 +12,11 @@ on:
     branches: [ main ]
 
 env:
+  # Bump the checksum together with the version; a stale hash fails the build
   HUGO_VERSION: 0.165.0
+  HUGO_SHA256: 5c3a37a5450b3e386e5b75a87a790fea2d04a796d75e171216c80ef48a32b432
   DART_SASS_VERSION: 1.102.0
+  DART_SASS_SHA256: 2a2ce6036f94534b39356252b1a3d4aa7879ab139c73bf62f7c9b5beafcfc367
   HUGO_ENVIRONMENT: production
 
 jobs:
@@ -29,10 +32,19 @@ jobs:
       # Standard edition is enough: WebP went all-edition in v0.153.0 and Dart Sass is an external binary
       - name: Install Hugo and Dart Sass
         run: |
-          set -eo pipefail # Without pipefail a failed curl is masked by tar's exit status
+          set -e # A failed checksum exits non-zero and stops the build here
           mkdir -p "${HOME}/.local/bin"
-          curl -sfL "https://github.com/gohugoio/hugo/releases/download/v${HUGO_VERSION}/hugo_${HUGO_VERSION}_linux-amd64.tar.gz" | tar -xz -C "${HOME}/.local/bin" hugo
-          curl -sfL "https://github.com/sass/dart-sass/releases/download/${DART_SASS_VERSION}/dart-sass-${DART_SASS_VERSION}-linux-x64.tar.gz" | tar -xz -C "${HOME}/.local"
+
+          # Download, verify, then extract: piping straight to tar leaves no place to check
+          # sha256sum -c needs exactly two spaces between the hash and the filename
+          curl -sfLO "https://github.com/gohugoio/hugo/releases/download/v${HUGO_VERSION}/hugo_${HUGO_VERSION}_linux-amd64.tar.gz"
+          echo "${HUGO_SHA256}  hugo_${HUGO_VERSION}_linux-amd64.tar.gz" | sha256sum -c -
+          tar -xzf "hugo_${HUGO_VERSION}_linux-amd64.tar.gz" -C "${HOME}/.local/bin" hugo
+
+          curl -sfLO "https://github.com/sass/dart-sass/releases/download/${DART_SASS_VERSION}/dart-sass-${DART_SASS_VERSION}-linux-x64.tar.gz"
+          echo "${DART_SASS_SHA256}  dart-sass-${DART_SASS_VERSION}-linux-x64.tar.gz" | sha256sum -c -
+          tar -xzf "dart-sass-${DART_SASS_VERSION}-linux-x64.tar.gz" -C "${HOME}/.local"
+
           echo "${HOME}/.local/bin" >> "${GITHUB_PATH}"
           echo "${HOME}/.local/dart-sass" >> "${GITHUB_PATH}"
 
