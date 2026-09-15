@@ -23,37 +23,38 @@ sudo apt install -y unbound
 sudo nano /etc/unbound/unbound.conf.d/pihole.conf
 
 server:
-    interface: 127.0.0.1
-    interface: <파이 IP>
-    port: 5335
-    do-ip4: yes
-    do-udp: yes
-    do-tcp: yes
-    do-ip6: no
-    prefer-ip6: no
+  ip-freebind: yes # 부팅 시 eth0에 IP가 붙기 전에 시작되면 바인딩 실패로 서비스가 죽음
+  interface: 127.0.0.1
+  interface: <파이 IP>
+  port: 5335
+  do-ip4: yes
+  do-udp: yes
+  do-tcp: yes
+  do-ip6: no
+  prefer-ip6: no
 
-    access-control: 127.0.0.0/8 allow
-    access-control: <내부망 대역> allow
-    access-control: 172.16.0.0/12 allow
+  access-control: 127.0.0.0/8 allow
+  access-control: <내부망 대역> allow
+  access-control: 172.16.0.0/12 allow
 
-    harden-glue: yes
-    harden-dnssec-stripped: yes
-    use-caps-for-id: no
-    edns-buffer-size: 1232
-    prefetch: yes
-    num-threads: 1
-    module-config: "validator iterator"
+  harden-glue: yes
+  harden-dnssec-stripped: yes
+  use-caps-for-id: no
+  edns-buffer-size: 1232
+  prefetch: yes
+  num-threads: 1
+  module-config: "validator iterator"
 
-    msg-cache-size: 50m
-    rrset-cache-size: 100m
-    cache-min-ttl: 300
-    cache-max-ttl: 86400
+  msg-cache-size: 50m
+  rrset-cache-size: 100m
+  cache-min-ttl: 300
+  cache-max-ttl: 86400
 
-    private-address: 192.168.0.0/16
-    private-address: 10.0.0.0/8
-    private-address: 172.16.0.0/12
-    private-address: 169.254.0.0/16
-    private-address: 127.0.0.0/8
+  private-address: 192.168.0.0/16
+  private-address: 10.0.0.0/8
+  private-address: 172.16.0.0/12
+  private-address: 169.254.0.0/16
+  private-address: 127.0.0.0/8
 
 # 적용
 sudo unbound-checkconf
