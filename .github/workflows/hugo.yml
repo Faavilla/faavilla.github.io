@@ -14,9 +14,9 @@ on:
 env:
   # Bump the checksum together with the version; a stale hash fails the build
   HUGO_VERSION: 0.165.0
-  HUGO_SHA256: 6c3a37a5450b3e386e5b75a87a790fea2d04a796d75e171216c80ef48a32b432
+  HUGO_SHA256: 5c3a37a5450b3e386e5b75a87a790fea2d04a796d75e171216c80ef48a32b432
   DART_SASS_VERSION: 1.102.0
-  DART_SASS_SHA256: 3a2ce6036f94534b39356252b1a3d4aa7879ab139c73bf62f7c9b5beafcfc367
+  DART_SASS_SHA256: 2a2ce6036f94534b39356252b1a3d4aa7879ab139c73bf62f7c9b5beafcfc367
   HUGO_ENVIRONMENT: production
 
 jobs:
@@ -24,8 +24,9 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      # Pinned to a commit SHA: tags can be moved to point at other commits
       - name: Checkout repository
-        uses: actions/checkout@v7
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false # The deploy step authenticates on its own
 
