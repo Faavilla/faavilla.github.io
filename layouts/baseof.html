@@ -14,6 +14,10 @@
 
     {{ partial "footer.html" . }}
 
+    {{/* Back-link handler; loaded site-wide since both page and section templates render the link */}}
+    {{ $backLinkJS := resources.Get "js/back-link.js" | minify | fingerprint }}
+    <script src="{{ $backLinkJS.RelPermalink }}" defer></script>
+
   </body>
 
 </html>

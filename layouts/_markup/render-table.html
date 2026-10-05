@@ -1,0 +1,26 @@
+{{- /* Mirrors Hugo's built-in table hook but emits alignment as a class instead of
+       an inline style, so the CSP can drop style-src 'unsafe-inline'.
+       Classes are styled in components/markdown.scss. */ -}}
+<table
+  {{- range $k, $v := .Attributes }}
+    {{- if $v }}{{ printf " %s=%q" $k ($v | transform.HTMLEscape) | safeHTMLAttr }}{{ end }}
+  {{- end }}>
+  <thead>
+    {{- range .THead }}
+    <tr>
+      {{- range . }}
+      <th{{ with .Alignment }} class="align-{{ . }}"{{ end }}>{{ .Text }}</th>
+      {{- end }}
+    </tr>
+    {{- end }}
+  </thead>
+  <tbody>
+    {{- range .TBody }}
+    <tr>
+      {{- range . }}
+      <td{{ with .Alignment }} class="align-{{ . }}"{{ end }}>{{ .Text }}</td>
+      {{- end }}
+    </tr>
+    {{- end }}
+  </tbody>
+</table>

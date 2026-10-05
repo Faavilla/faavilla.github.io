@@ -90,6 +90,11 @@ table {
     border: 1px solid var(--table-td-border);
     background-color: var(--table-td-bg);
   }
+
+  /* Column alignment from markdown (:--, :-:, --:); set by _markup/render-table.html */
+  .align-left   { text-align: left; }
+  .align-center { text-align: center; }
+  .align-right  { text-align: right; }
 }
 
 :not(pre) > code {

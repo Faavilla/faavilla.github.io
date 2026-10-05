@@ -28,12 +28,15 @@
 
   <meta name="referrer" content="no-referrer">
 
-  <!-- unsafe-inline is required by the theme init script and markdown inline styles -->
+  <!-- The theme-init script is inlined below and allowed by its sha256 hash, so no 'unsafe-inline'
+       in script-src. Table alignment is emitted as classes (see _markup/render-table.html), so
+       style-src needs no 'unsafe-inline' either. -->
+  {{ $themeInit := resources.Get "js/theme-init.js" | minify | fingerprint "sha256" }}
   <meta http-equiv="Content-Security-Policy" content="
     default-src 'self';
-    script-src 'self' 'unsafe-inline';
+    script-src 'self' '{{ $themeInit.Data.Integrity }}';
     connect-src 'self';
-    style-src 'self' https://fonts.googleapis.com 'unsafe-inline';
+    style-src 'self' https://fonts.googleapis.com;
     font-src 'self' https://fonts.gstatic.com;
     img-src 'self';
     object-src 'none';
@@ -65,28 +68,17 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 
-  <!-- Load the font async; the preload swaps itself to a stylesheet on load -->
-  <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;600&display=swap" onload="this.onload=null; this.rel='stylesheet'">
-  <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;600&display=swap"></noscript>
+  <!-- Plain stylesheet link: the async preload swap needed an inline onload the CSP no longer allows.
+       preconnect above keeps the cost low and display=swap avoids blocking text on the font itself -->
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;600&display=swap">
 
   <!-- Fingerprint handles cache busting; SRI omitted since the CSS is same-origin -->
   {{ $opts := dict "transpiler" "dartsass" }}
   {{ $style := resources.Get "sass/main.scss" | css.Sass $opts | minify | fingerprint }}
   <link rel="stylesheet" href="{{ $style.RelPermalink }}">
 
-  <!-- Resolve the theme before first paint to avoid a flash; mirrors color-mode-btn.js -->
-  <script>
-    (function () {
-      try {
-        const stored = localStorage.getItem("theme");
-        const dark = stored === "dark"
-          || (stored !== "light" && window.matchMedia("(prefers-color-scheme: dark)").matches);
-        if (dark) {
-          document.documentElement.setAttribute("data-theme", "dark");
-          document.querySelector("meta[name=theme-color]").setAttribute("content", "#211f1b");
-        }
-      } catch (err) { }
-    })();
-  </script>
+  <!-- Resolve the theme before first paint to avoid a flash. Inlined (not src=) so it runs
+       immediately; the CSP above whitelists exactly this content by hash -->
+  <script>{{ $themeInit.Content | safeJS }}</script>
 
 </head>
