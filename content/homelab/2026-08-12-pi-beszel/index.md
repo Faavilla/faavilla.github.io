@@ -58,7 +58,7 @@ docker compose up -d beszel
 ```
 
 폴더 생성, compose까지 만들고 먼저 웹 UI를 열어서 계정을 생성하고 로그인하면 시스템 추가라는 메뉴가 있습니다.
-![Add-system](./add-system.webp)
+![Beszel 시스템 추가 버튼](./add-system.webp)
 - 이름 : 마음대로
 - 호스트 / IP : 모니터링할 기기(파이) IP 입력, **localhost** 쓰면 모니터링 안됨
 - 포트 : 기본값 사용
@@ -86,6 +86,6 @@ sudo ufw allow from 172.16.0.0/12 to any port 45876 proto tcp comment 'beszel hu
 sudo ufw status numbered
 ```
 
-![Setting-done](./setting-done.webp)
+![Beszel 사용량 그래프](./setting-done.webp)
 
 이렇게 모니터링 툴까지 설정이 완료되었습니다. 실시간 모니터링은 아쉽지만 언제 부하가 많이 걸리는지 볼 수 있고, 인터넷이 끊기면 그래프에 공백이 생겨서 인터넷 문제 생기는 경우도 알 수 있어서 나름 괜찮았습니다.

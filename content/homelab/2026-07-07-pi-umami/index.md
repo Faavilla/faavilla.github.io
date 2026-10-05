@@ -112,7 +112,7 @@ nano docker-compose.yml
 docker compose restart
 ```
 
-![Tunnel](./tunnel_active.webp)
+![클라우드플레어 터널 정상 상태](./tunnel_active.webp)
 
 클라우드 플레어 터널까지 활성화 되었으면 모니터링할 사이트 연결 진행하시면 됩니다.
 
