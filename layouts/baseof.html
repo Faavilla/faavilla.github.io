@@ -14,9 +14,12 @@
 
     {{ partial "footer.html" . }}
 
-    {{/* Back-link handler; loaded site-wide since both page and section templates render the link */}}
-    {{ $backLinkJS := resources.Get "js/back-link.js" | minify | fingerprint }}
-    <script src="{{ $backLinkJS.RelPermalink }}" defer></script>
+    {{/* Back-link handler: only section pages and archive posts render the link,
+         so home and 404 (kind=404, empty .Section) skip the request */}}
+    {{ if or .IsSection (in site.Params.archiveSections .Section) }}
+      {{ $backLinkJS := resources.Get "js/back-link.js" | minify | fingerprint }}
+      <script src="{{ $backLinkJS.RelPermalink }}" defer></script>
+    {{ end }}
 
   </body>
 
