@@ -66,6 +66,14 @@ blockquote {
   }
 }
 
+/* Match the header line; the UA default turns near-white under color-scheme: dark */
+hr {
+  margin: 1.6rem 0;
+  border: 0;
+  border-top: 1px solid var(--header-line);
+  opacity: 0.8;
+}
+
 table {
   max-width: max-content;
   margin: 0;
@@ -111,11 +119,21 @@ abbr[title] {
   overflow-x: auto;
 }
 
+/* Spacing lives on whichever element is outermost: the wrapper for Chroma,
+   the pre itself for language-less blocks. Consecutive blocks no longer touch. */
+.highlight,
+pre {
+  margin: 0 0 1rem;
+}
+
+.highlight > pre {
+  margin: 0;
+}
+
 /* Styled on pre so language-less code blocks get the same frame */
 pre {
   width: max-content;
   max-width: 100%;
-  margin: 0;
   padding: 0.3rem 0.5rem;
   border: 1px solid var(--code-border);
   border-radius: 0.2rem;

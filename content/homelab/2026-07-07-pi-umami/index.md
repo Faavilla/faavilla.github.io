@@ -14,7 +14,6 @@ ssh-copy-id 사용자명@라즈베리파이IP
 # 접속 후 파이 업데이트
 sudo apt update && sudo apt upgrade -y
 ```
-<br>
 
 ---
 
