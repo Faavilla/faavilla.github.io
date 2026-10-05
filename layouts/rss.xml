@@ -1,4 +1,4 @@
-{{- /* Copied from Hugo v0.165.0 tpl/tplimpl/embedded/templates/rss.xml.
+{{- /* Copied from Hugo v0.167.0 tpl/tplimpl/embedded/templates/rss.xml (identical to v0.165.0).
        Changes: <generator> removed (same intent as disableHugoGeneratorInject),
        <description> uses site.Params.description instead of the English default.
        Re-diff against upstream when bumping Hugo. */ -}}
