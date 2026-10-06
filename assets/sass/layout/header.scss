@@ -59,6 +59,7 @@
   background-position: left;
   box-shadow: inset 0 0 0 0.02rem rgba(0, 0, 0, 0.05);
   cursor: pointer;
+  -webkit-tap-highlight-color: transparent; /* The theme flip is feedback enough */
   transition:
     border-color 0.2s ease,
     background-position 0.2s ease;

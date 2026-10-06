@@ -22,6 +22,7 @@
     align-items: baseline;
     gap: 0.4rem;
     cursor: pointer;
+    -webkit-tap-highlight-color: transparent; /* Opening the year is feedback enough */
     transition: opacity 0.2s ease;
 
     /* The empty alt ("/ ") hides the decorative marker from screen readers */
