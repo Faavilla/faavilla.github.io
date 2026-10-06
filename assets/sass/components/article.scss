@@ -15,28 +15,22 @@
     align-items: center;
     justify-content: center;
     flex-shrink: 0;
-    font-size: 1.2rem;
     opacity: 0.8;
   }
 
   &__title {
     margin: 0;
     letter-spacing: -0.01em;
-    text-align: left;
   }
 
   &__date {
-    margin-left: auto;
     flex-shrink: 0;
-    color: var(--color-text);
+    margin-left: auto;
     font-size: 0.92rem;
     opacity: 0.8;
   }
 
   &__content {
-    font-size: 1rem;
-    font-weight: 400;
-
     h2 { margin: 2rem 0 0.8rem; }
     h3 { margin: 2rem 0 0.8rem; }
     h4 { margin: 1.6rem 0 0.6rem; }
@@ -45,21 +39,6 @@
 
     :is(h1, h2, h3, h4, h5, h6) + p {
       margin-top: 0;
-    }
-
-    a {
-      transition: opacity 0.2s ease;
-
-      &:hover {
-        opacity: 0.8;
-        text-decoration: underline;
-        text-decoration-thickness: 0.08em;
-        text-underline-offset: 0.2rem;
-      }
-    }
-
-    li {
-      overflow-wrap: break-word;
     }
   }
 }
@@ -71,6 +50,7 @@
   height: 2rem;
   border: none;
   color: var(--color-text);
+  font-size: 1.2rem;
   font-weight: 600;
   background: none;
   transition: opacity 0.2s ease;
@@ -79,9 +59,8 @@
 .to-top {
   display: none;
   margin: 2rem auto 0;
-  font-size: 1.2rem;
-  cursor: pointer;
   opacity: 0;
+  cursor: pointer;
   pointer-events: none;
 
   &.show {

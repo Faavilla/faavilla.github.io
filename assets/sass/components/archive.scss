@@ -24,25 +24,23 @@
     cursor: pointer;
     transition: opacity 0.2s ease;
 
-    &:hover {
-      opacity: 0.8;
-    }
-
     /* The empty alt ("/ ") hides the decorative marker from screen readers */
     &::before {
       content: "+" / "";
       margin-right: 0.15rem;
-      color: var(--color-text);
       opacity: 0.7;
+    }
+
+    /* Opening the year doesn't navigate, so a tap would leave it dimmed on touch screens */
+    @media (hover: hover) and (pointer: fine) {
+      &:hover {
+        opacity: 0.8;
+      }
     }
   }
 
   &__details[open] > &__summary::before {
     content: "−" / "";
     margin-right: 0.24rem;
-  }
-
-  &__year {
-    color: var(--color-text);
   }
 }

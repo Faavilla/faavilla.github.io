@@ -53,13 +53,6 @@
   border: 0.12rem solid var(--color-text);
   border-radius: 0.14rem;
 
-  /* The visible strip is 25.6x12.8px; this pads the tap target to ~45x32px without changing the look */
-  &::before {
-    content: "";
-    position: absolute;
-    inset: -0.6rem;
-  }
-
   /* Two-tone strip; background-position picks the visible half */
   background: linear-gradient(to right, var(--mode-btn-dark) 50%, var(--mode-btn-light) 50%);
   background-size: 200% 100%;
@@ -70,8 +63,19 @@
     border-color 0.2s ease,
     background-position 0.2s ease;
 
-  &:hover {
-    border-color: var(--color-link);
+  /* The visible strip is 25.6x12.8px; this pads the tap target to ~45x32px without changing the look */
+  &::before {
+    content: "";
+    position: absolute;
+    inset: -0.6rem;
+  }
+
+  /* Hover only on precise pointers; a tap would otherwise leave the border lit,
+     since toggling doesn't navigate away */
+  @media (hover: hover) and (pointer: fine) {
+    &:hover {
+      border-color: var(--color-link);
+    }
   }
 
   [data-theme="dark"] & {

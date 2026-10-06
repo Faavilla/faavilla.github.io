@@ -1,6 +1,12 @@
 /* Sass variable so rgba() can derive alpha variants; matches --header-line */
 $scrollbar: #abaaa4;
 
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
 html {
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
@@ -26,12 +32,6 @@ html {
       background: rgba($scrollbar, 0.34);
     }
   }
-}
-
-*,
-*::before,
-*::after {
-  box-sizing: border-box;
 }
 
 body {
@@ -62,9 +62,9 @@ textarea {
 }
 
 img {
-  margin: 1.2rem 0;
   max-width: 100%;
   height: auto;
+  margin: 1.2rem 0;
 }
 
 a {

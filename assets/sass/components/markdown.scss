@@ -104,11 +104,11 @@ table {
   font-size: 0.94em; /* Relative so code scales with headings too */
   font-weight: 500;
   background-color: var(--inline-code-bg);
-}
 
-/* Light mode inherits the surrounding text color on purpose */
-[data-theme="dark"] :not(pre) > code {
-  color: var(--code-text);
+  /* Light mode inherits the surrounding text color on purpose */
+  [data-theme="dark"] & {
+    color: var(--code-text);
+  }
 }
 
 abbr[title] {
@@ -117,28 +117,24 @@ abbr[title] {
   cursor: help;
 }
 
-/* Chroma's outer wrapper div */
+/* Chroma's outer wrapper div. Spacing sits on the outermost element — this wrapper,
+   or the pre itself for language-less blocks — so consecutive blocks don't touch */
 .highlight {
   width: max-content;
   max-width: 100%;
-  overflow-x: auto;
-}
-
-/* Spacing lives on whichever element is outermost: the wrapper for Chroma,
-   the pre itself for language-less blocks. Consecutive blocks no longer touch. */
-.highlight,
-pre {
   margin: 0 0 1rem;
-}
+  overflow-x: auto;
 
-.highlight > pre {
-  margin: 0;
+  > pre {
+    margin: 0;
+  }
 }
 
 /* Styled on pre so language-less code blocks get the same frame */
 pre {
   width: max-content;
   max-width: 100%;
+  margin: 0 0 1rem;
   padding: 0.3rem 0.5rem;
   border: 1px solid var(--code-border);
   border-radius: 0.2rem;
@@ -151,8 +147,8 @@ pre {
 
 /* Token colors; the base text color cascades from pre */
 .chroma {
-  /* Comments */
-  .c, .ch, .cm, .cp, .cpf, .cs { color: var(--token-comment); }
+  /* Comments (.c1 is the single-line form: bash/python "#" lines) */
+  .c, .c1, .ch, .cm, .cp, .cpf, .cs { color: var(--token-comment); }
 
   /* Keywords, attributes, function names */
   .k, .kn, .kp, .kr, .na, .nf, .fm { color: var(--token-keyword); }
@@ -160,8 +156,8 @@ pre {
   /* Types, declarations, tags, namespaces, builtins, constants, decorators */
   .kc, .kd, .kt, .nt, .nn, .nc, .no, .nd, .ni, .nb, .bp { color: var(--token-type); }
 
-  /* Strings, numbers, literals */
-  .s, .sa, .sb, .sc, .dl, .sd, .se, .sh, .si, .sx, .sr, .ss,
+  /* Strings, numbers, literals (.s1 single-quoted, .s2 double-quoted) */
+  .s, .s1, .s2, .sa, .sb, .sc, .dl, .sd, .se, .sh, .si, .sx, .sr, .ss,
   .m, .mb, .mf, .mh, .mi, .il, .mo, .l, .ld { color: var(--token-literal); }
 
   /* Operators, punctuation */
