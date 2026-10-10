@@ -1,0 +1,1 @@
+const backLink=document.querySelector(".article__back-link");backLink&&backLink.addEventListener("click",e=>{history.length>1&&(e.preventDefault(),history.back())})
