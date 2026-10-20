@@ -1,6 +1,23 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <!-- Ahead of every resource: a meta CSP doesn't cover elements before it. No 'unsafe-inline';
+       theme-init is allowed by hash and table alignment uses classes (render-table.html) -->
+  {{ $themeInit := resources.Get "js/theme-init.js" | minify | fingerprint "sha256" }}
+  <meta http-equiv="Content-Security-Policy" content="
+    default-src 'self';
+    script-src 'self' '{{ $themeInit.Data.Integrity }}';
+    connect-src 'self';
+    style-src 'self' https://fonts.googleapis.com;
+    font-src 'self' https://fonts.gstatic.com;
+    img-src 'self';
+    object-src 'none';
+    base-uri 'self';
+    form-action 'self';
+  ">
+  <meta name="referrer" content="no-referrer">
+
   <meta name="color-scheme" content="light dark">
 
   <!-- Browser chrome color; scripts keep it in sync with the active theme -->
@@ -26,29 +43,12 @@
   {{ $metaDesc = $metaDesc | plainify | chomp | truncate 150 }}
   <meta name="description" content="{{ $metaDesc }}">
 
-  <meta name="referrer" content="no-referrer">
-
-  <!-- The theme-init script is inlined below and allowed by its sha256 hash, so no 'unsafe-inline'
-       in script-src. Table alignment is emitted as classes (see _markup/render-table.html), so
-       style-src needs no 'unsafe-inline' either. -->
-  {{ $themeInit := resources.Get "js/theme-init.js" | minify | fingerprint "sha256" }}
-  <meta http-equiv="Content-Security-Policy" content="
-    default-src 'self';
-    script-src 'self' '{{ $themeInit.Data.Integrity }}';
-    connect-src 'self';
-    style-src 'self' https://fonts.googleapis.com;
-    font-src 'self' https://fonts.gstatic.com;
-    img-src 'self';
-    object-src 'none';
-    base-uri 'self';
-    form-action 'self';
-  ">
-
   <title>
     {{- if or .IsHome (not .Title) }}{{ site.Title }}{{ else }}{{ .Title }} | {{ site.Title }}{{ end -}}
   </title>
 
-  {{ $ogType := cond (in site.Params.archiveSections .Section) "article" (site.Params.ogType | default "website") }}
+  <!-- Only the posts themselves are articles; section listings share .Section but are pages of links -->
+  {{ $ogType := cond (and .IsPage (in site.Params.archiveSections .Section)) "article" (site.Params.ogType | default "website") }}
   {{ $ogImage := site.Params.ogImage | absURL }}
   <meta property="og:url" content="{{ .Permalink }}">
   <meta property="og:type" content="{{ $ogType }}">
