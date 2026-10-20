@@ -56,17 +56,15 @@
   transition: opacity 0.2s ease;
 }
 
+/* Hidden until to-top.js finds the page scrollable */
 .to-top {
   display: none;
   margin: 2rem auto 0;
-  opacity: 0;
   cursor: pointer;
-  pointer-events: none;
 
   &.show {
     display: block;
     opacity: 0.8;
-    pointer-events: auto;
   }
 }
 

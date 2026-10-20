@@ -14,10 +14,10 @@
     font-size: 0.84rem;
     text-align: center;
 
+    /* .footer__item already centers this list; align-items centers the stacked items on mobile */
     ul {
       display: flex;
       align-items: center;
-      justify-content: center;
       gap: 1.6rem;
 
       @media (max-width: 540px) {
