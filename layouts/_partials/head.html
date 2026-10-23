@@ -2,8 +2,8 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
-  <!-- Ahead of every resource: a meta CSP doesn't cover elements before it. No 'unsafe-inline';
-       theme-init is allowed by hash and table alignment uses classes (render-table.html) -->
+  {{/* Ahead of every resource: a meta CSP doesn't cover elements before it. No 'unsafe-inline';
+       theme-init is allowed by hash and table alignment uses classes (render-table.html) */}}
   {{ $themeInit := resources.Get "js/theme-init.js" | minify | fingerprint "sha256" }}
   <meta http-equiv="Content-Security-Policy" content="
     default-src 'self';
@@ -20,13 +20,13 @@
 
   <meta name="color-scheme" content="light dark">
 
-  <!-- Browser chrome color; scripts keep it in sync with the active theme -->
+  {{/* Browser chrome color; scripts keep it in sync with the active theme */}}
   <meta name="theme-color" content="#f3f3f1">
 
-  <!-- ico and touch icon stay unfingerprinted in static/; browsers probe them at fixed root paths -->
+  {{/* ico and touch icon stay unfingerprinted in static/; browsers probe them at fixed root paths */}}
   <link rel="icon" href="{{ "/favicon.ico" | relURL }}" sizes="32x32">
 
-  <!-- Fingerprinted filename doubles as cache busting -->
+  {{/* Fingerprinted filename doubles as cache busting */}}
   {{ $favicon := resources.Get "favicon/favicon.svg" | fingerprint }}
   <link rel="icon" type="image/svg+xml" href="{{ $favicon.RelPermalink }}">
 
@@ -34,7 +34,7 @@
 
   <link rel="canonical" href="{{ .Permalink }}">
 
-  <!-- Autodiscovery link; always points to the site-wide feed -->
+  {{/* Autodiscovery link; always points to the site-wide feed */}}
   {{ with site.Home.OutputFormats.Get "RSS" }}
   <link rel="alternate" type="application/rss+xml" title="{{ site.Title }}" href="{{ .Permalink }}">
   {{ end }}
@@ -47,7 +47,7 @@
     {{- if or .IsHome (not .Title) }}{{ site.Title }}{{ else }}{{ .Title }} | {{ site.Title }}{{ end -}}
   </title>
 
-  <!-- Only the posts themselves are articles; section listings share .Section but are pages of links -->
+  {{/* Only the posts themselves are articles; section listings share .Section but are pages of links */}}
   {{ $ogType := cond (and .IsPage (in site.Params.archiveSections .Section)) "article" (site.Params.ogType | default "website") }}
   {{ $ogImage := site.Params.ogImage | absURL }}
   <meta property="og:url" content="{{ .Permalink }}">
@@ -68,17 +68,17 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 
-  <!-- Plain stylesheet link: the async preload swap needed an inline onload the CSP no longer allows.
-       preconnect above keeps the cost low and display=swap avoids blocking text on the font itself -->
+  {{/* Plain stylesheet link: the async preload swap needed an inline onload the CSP no longer allows.
+       preconnect above keeps the cost low and display=swap avoids blocking text on the font itself */}}
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;600&display=swap">
 
-  <!-- Fingerprint handles cache busting; SRI omitted since the CSS is same-origin -->
+  {{/* Fingerprint handles cache busting; SRI omitted since the CSS is same-origin */}}
   {{ $opts := dict "transpiler" "dartsass" }}
   {{ $style := resources.Get "sass/main.scss" | css.Sass $opts | minify | fingerprint }}
   <link rel="stylesheet" href="{{ $style.RelPermalink }}">
 
-  <!-- Resolve the theme before first paint to avoid a flash. Inlined (not src=) so it runs
-       immediately; the CSP above whitelists exactly this content by hash -->
+  {{/* Resolve the theme before first paint to avoid a flash. Inlined (not src=) so it runs
+       immediately; the CSP above whitelists exactly this content by hash */}}
   <script>{{ $themeInit.Content | safeJS }}</script>
 
 </head>

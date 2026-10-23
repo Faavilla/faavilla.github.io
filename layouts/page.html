@@ -15,7 +15,7 @@
 </section>
 
 {{ if $isPost }}
-<button class="to-top" type="button" aria-label="맨 위로" tabindex="-1"><span aria-hidden="true">↑</span></button>
+<button class="to-top" type="button" aria-label="맨 위로"><span aria-hidden="true">↑</span></button>
 {{ $toTopJS := resources.Get "js/to-top.js" | minify | fingerprint }}
 <script src="{{ $toTopJS.RelPermalink }}" defer></script>
 {{ end }}
