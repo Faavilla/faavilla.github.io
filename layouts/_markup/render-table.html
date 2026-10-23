@@ -1,26 +1,30 @@
 {{- /* Mirrors Hugo's built-in table hook but emits alignment as a class instead of
        an inline style, so the CSP can drop style-src 'unsafe-inline'.
+       The table-scroll wrapper lets a wide table scroll on its own instead of widening
+       the page; tabindex keeps it keyboard-scrollable, as Hugo does for code blocks.
        Classes are styled in components/markdown.scss. */ -}}
-<table
-  {{- range $k, $v := .Attributes }}
-    {{- if $v }}{{ printf " %s=%q" $k ($v | transform.HTMLEscape) | safeHTMLAttr }}{{ end }}
-  {{- end }}>
-  <thead>
-    {{- range .THead }}
-    <tr>
-      {{- range . }}
-      <th{{ with .Alignment }} class="align-{{ . }}"{{ end }}>{{ .Text }}</th>
+<div class="table-scroll" tabindex="0">
+  <table
+    {{- range $k, $v := .Attributes }}
+      {{- if $v }}{{ printf " %s=%q" $k ($v | transform.HTMLEscape) | safeHTMLAttr }}{{ end }}
+    {{- end }}>
+    <thead>
+      {{- range .THead }}
+      <tr>
+        {{- range . }}
+        <th{{ with .Alignment }} class="align-{{ . }}"{{ end }}>{{ .Text }}</th>
+        {{- end }}
+      </tr>
       {{- end }}
-    </tr>
-    {{- end }}
-  </thead>
-  <tbody>
-    {{- range .TBody }}
-    <tr>
-      {{- range . }}
-      <td{{ with .Alignment }} class="align-{{ . }}"{{ end }}>{{ .Text }}</td>
+    </thead>
+    <tbody>
+      {{- range .TBody }}
+      <tr>
+        {{- range . }}
+        <td{{ with .Alignment }} class="align-{{ . }}"{{ end }}>{{ .Text }}</td>
+        {{- end }}
+      </tr>
       {{- end }}
-    </tr>
-    {{- end }}
-  </tbody>
-</table>
+    </tbody>
+  </table>
+</div>

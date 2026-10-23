@@ -97,6 +97,11 @@ table {
   .align-right  { text-align: right; }
 }
 
+/* Wraps every table (_markup/render-table.html) so a wide one scrolls here instead of widening the page */
+.table-scroll {
+  overflow-x: auto;
+}
+
 :not(pre) > code {
   padding: 0.1rem 0.35rem;
   border-radius: 0.2rem;
@@ -113,7 +118,7 @@ table {
 
 abbr[title] {
   text-decoration: underline dotted;
-  text-underline-offset: 0.2em;
+  text-underline-offset: 0.2rem;
   cursor: help;
 }
 
