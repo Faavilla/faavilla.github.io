@@ -4,10 +4,10 @@
   transition: opacity 0.2s ease;
 
   &:hover {
-    opacity: 0.8;
     text-decoration: underline;
     text-decoration-thickness: 0.08em;
     text-underline-offset: 0.2rem;
+    opacity: 0.8;
   }
 }
 

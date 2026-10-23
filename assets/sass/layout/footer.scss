@@ -6,7 +6,7 @@
     opacity: 0.8;
   }
 
-  &__item {
+  &__row {
     display: flex;
     justify-content: center;
     padding: 0.8rem;
@@ -14,7 +14,7 @@
     font-size: 0.84rem;
     text-align: center;
 
-    /* .footer__item already centers this list; align-items centers the stacked items on mobile */
+    /* .footer__row already centers this list; align-items centers the stacked items on mobile */
     ul {
       display: flex;
       align-items: center;

@@ -6,7 +6,7 @@
     opacity: 0.8;
   }
 
-  &__item {
+  &__row {
     display: flex;
     align-items: baseline; /* Sit the brand and link text on the same baseline */
     justify-content: space-between;
@@ -88,7 +88,7 @@
 @media (max-width: 540px) {
   .header {
     /* Grid, not flex — the centered brand and the right-pinned toggle share row 1 */
-    &__item {
+    &__row {
       display: grid;
       grid-template-columns: 1fr auto 1fr;
       align-items: center;

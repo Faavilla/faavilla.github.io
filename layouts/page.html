@@ -3,8 +3,8 @@
 {{ $isPost := in site.Params.archiveSections .Section }}
 
 {{ if $isPost }}
-<div class="article__item">
-  <a class="article__back-link" href="{{ `/` | relURL }}" aria-label="Go back"><span aria-hidden="true">←</span></a>
+<div class="article__row">
+  <a class="article__back-link" href="{{ `/` | relURL }}" aria-label="뒤로 가기"><span aria-hidden="true">←</span></a>
   <h2 class="article__title">{{ .Title }}</h2>
   <time class="article__date" datetime="{{ .Date.Format `2006-01-02T15:04:05Z07:00` }}">{{ .Date.Format "2006-01-02" }}</time>
 </div>
@@ -15,7 +15,7 @@
 </section>
 
 {{ if $isPost }}
-<button class="to-top" type="button" aria-label="Back to top" tabindex="-1">↑</button>
+<button class="to-top" type="button" aria-label="맨 위로" tabindex="-1"><span aria-hidden="true">↑</span></button>
 {{ $toTopJS := resources.Get "js/to-top.js" | minify | fingerprint }}
 <script src="{{ $toTopJS.RelPermalink }}" defer></script>
 {{ end }}

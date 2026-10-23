@@ -3,7 +3,7 @@
   margin: 2.6rem auto;
   padding: 0.2rem;
 
-  &__item {
+  &__row {
     display: flex;
     align-items: center;
     gap: 0.8rem;
@@ -88,7 +88,7 @@
   }
 
   /* Drop the date under the title so it stops squeezing the title mid-word */
-  .article__item {
+  .article__row {
     flex-wrap: wrap;
     row-gap: 0.2rem;
   }

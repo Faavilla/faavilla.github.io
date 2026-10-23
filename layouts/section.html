@@ -1,11 +1,11 @@
 {{ define "main" }}
 
-<div class="article__item">
-  <a class="article__back-link" href="{{ `/` | relURL }}" aria-label="Go back"><span aria-hidden="true">←</span></a>
+<div class="article__row">
+  <a class="article__back-link" href="{{ `/` | relURL }}" aria-label="뒤로 가기"><span aria-hidden="true">←</span></a>
   <h2 class="article__title">{{ .Title }}</h2>
 </div>
 
-{{ if eq (len .RegularPages) 0 }}<p>There are no posts.</p>{{ else }}
+{{ if eq (len .RegularPages) 0 }}<p lang="en">There are no posts.</p>{{ else }}
 <section>
   <h3>Recent</h3>
 
