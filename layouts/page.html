@@ -2,22 +2,29 @@
 
 {{ $isPost := in site.Params.archiveSections .Section }}
 
+{{/* A post is one article: its title row (back link, title, date) and body.
+     The title row stays a div, as in section.html, so the site header is the page's only header.
+     The to-top button is page UI, so it sits outside. Other pages render the body alone. */}}
 {{ if $isPost }}
-<div class="article__row">
-  <a class="article__back-link" href="{{ `/` | relURL }}" aria-label="뒤로 가기"><span aria-hidden="true">←</span></a>
-  <h2 class="article__title">{{ .Title }}</h2>
-  <time class="article__date" datetime="{{ .Date.Format `2006-01-02T15:04:05Z07:00` }}">{{ .Date.Format "2006-01-02" }}</time>
-</div>
-{{ end }}
+<article>
+  <div class="article__row">
+    <a class="article__back-link" href="{{ `/` | relURL }}" aria-label="뒤로 가기"><span aria-hidden="true">←</span></a>
+    <h2 class="article__title">{{ .Title }}</h2>
+    <time class="article__date" datetime="{{ .Date.Format `2006-01-02T15:04:05Z07:00` }}">{{ .Date.Format "2006-01-02" }}</time>
+  </div>
 
-<section class="article__content">
-  {{ .Content }}
-</section>
+  <div class="article__content">
+    {{ .Content }}
+  </div>
+</article>
 
-{{ if $isPost }}
 <button class="to-top" type="button" aria-label="맨 위로"><span aria-hidden="true">↑</span></button>
 {{ $toTopJS := resources.Get "js/to-top.js" | minify | fingerprint }}
 <script src="{{ $toTopJS.RelPermalink }}" defer></script>
+{{ else }}
+<div class="article__content">
+  {{ .Content }}
+</div>
 {{ end }}
 
 {{ end }}

@@ -21,3 +21,6 @@ resources
 
 # Claude AI
 .claude
+
+# local only — not pushed to remote
+.armarium/
