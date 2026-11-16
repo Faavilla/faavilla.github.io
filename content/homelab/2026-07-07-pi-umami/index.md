@@ -57,6 +57,7 @@ openssl rand -base64 32
 nano .env
 # 아래 내용 입력
 APP_SECRET=랜덤한_긴_문자열
+# DB 비밀번호는 아래 DB 주소에 그대로 들어가서 / @ 같은 기호가 없어야 함 (예: openssl rand -hex 24)
 POSTGRES_PASSWORD=랜덤한_비밀번호
 # 지금 시점에선 비워둠, 어드민 삭제 후 입력
 CLOUDFLARE_TUNNEL_TOKEN=클라우드플레어_터널_토큰값
@@ -66,13 +67,29 @@ nano docker-compose.yml
 # 아래 내용 입력
 services:
   umami:
-    image: umamisoftware/umami:3.1.0 # 버전 고정용
+    image: umamisoftware/umami:3.2.0 # 버전 고정용
     ports:
       - "127.0.0.1:3000:3000" # 로컬 호스트만 열게끔
-    env_file:
-      - .env
+    environment:
+      DATABASE_URL: postgresql://umami:${POSTGRES_PASSWORD}@db:5432/umami # DB 주소, 없으면 우마미가 안 뜸
+      APP_SECRET: ${APP_SECRET}
     depends_on:
-      - db
+      db:
+        condition: service_healthy
+    init: true
+    restart: always
+    healthcheck:
+      test: ["CMD-SHELL", "curl http://localhost:3000/api/heartbeat"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  cloudflared:
+    image: cloudflare/cloudflared:latest
+    restart: unless-stopped
+    command: tunnel --no-autoupdate run
+    environment:
+      - TUNNEL_TOKEN=${CLOUDFLARE_TUNNEL_TOKEN}
 
   db:
     image: postgres:15-alpine
@@ -80,36 +97,42 @@ services:
       POSTGRES_DB: umami
       POSTGRES_USER: umami
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      TZ: Asia/Seoul
     volumes:
       - umami-db-data:/var/lib/postgresql/data
-
-  cloudflared:
-    image: cloudflare/cloudflared:latest
-    command: tunnel run
-    env_file:
-      - .env
-    environment:
-      - TUNNEL_TOKEN=${CLOUDFLARE_TUNNEL_TOKEN}
-    depends_on:
-      - umami
+    restart: always
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U umami"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
 
 volumes:
   umami-db-data:
 
-# 실행 및 로그 확인
-docker compose up -d
+# 우마미, DB만 먼저 실행 및 로그 확인 (토큰 없이 터널까지 올리면 재시작 루프에 빠짐)
+docker compose up -d umami
 docker compose logs -f
 ```
 
 여기까지 잘 실행되었다면 클라우드플레어 터널 접속은 안되고, 로컬에서는 우마미 접속이 되는 상태입니다.
 
+우마미는 `127.0.0.1`에만 열어둬서 파이 안에서만 접속됩니다. 다른 기기에서 보려면 SSH 포워딩으로 연결해주면 됩니다.
+
+```zsh
+# 맥북에서 접속할 경우
+ssh -L 3000:127.0.0.1:3000 사용자명@라즈베리파이IP
+```
+
+이후 `http://localhost:3000` 접속하면 됩니다.
+
 env에 터널 토큰값을 비워둔 이유는 우마미 기본 어드민 계정 삭제 후 터널 오픈할거라 비워두었습니다.  
 로컬에서 우마미 접속 후 새 관리자 생성 -> 기본 어드민 삭제 후 터널 토큰값 입력하시면 됩니다.
 
 ```bash
-# 터널 토큰값 입력후 도커 재시작
-nano docker-compose.yml
-docker compose restart
+# .env에 터널 토큰값 입력 후 다시 올리기 (restart는 바뀐 env를 읽지 않음)
+nano .env
+docker compose up -d
 ```
 
 ![클라우드플레어 터널 정상 상태](./tunnel_active.webp)

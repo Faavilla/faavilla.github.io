@@ -8,13 +8,13 @@ date: 2026-08-12
 간단하게 말하면 CPU, RAM, 온도, 디스크 상태, 도커 컨테이너 상태 등의 정보를 웹에서 보기 편하게 기록해주는 도구입니다. 실시간 모니터링에는 적합하지 않아서 기록을 남겨두고 부하가 얼마나 걸리는지, 평균 얼마나 쓰는지 모니터링하는 데 사용합니다.
 
 ### 설치
-Beszel은 허브(웹 UI), 에이전트(데이터 수집) 두 개의 도커 컨테이너로 돌아가고 있고 둘 다 파이에 설치해서 모니터링합니다. 추가로 `smartmontools`를 설치해서 SSD 모니터링까지 설정했습니다.
+Beszel은 허브(웹 UI), 에이전트(데이터 수집) 두 개의 도커 컨테이너로 돌아가고 있고 둘 다 파이에 설치해서 모니터링합니다. 에이전트는 `smartctl`이 들어 있는 alpine 이미지를 써서 SSD 상태(S.M.A.R.T.)까지 볼 수 있게 했습니다.
 
 ```bash
 # 작업 폴더 생성, 이동
 mkdir -p ~/beszel && cd ~/beszel
 
-# smartmontools 설치 - 디스크 모니터링용
+# smartmontools 설치 - NVME 장치 이름 확인용
 sudo apt install smartmontools
 
 # NVMe 디바이스 이름 확인 (compose에 넣을 이름 미리 확인)
@@ -33,13 +33,15 @@ services:
     ports:
       - "127.0.0.1:8090:8090" # 로컬호스트만 열게끔
     volumes:
-      - beszel_data:/beszel_data
+      - ./beszel_data:/beszel_data
 
   beszel-agent:
     image: henrygd/beszel-agent:0.18.7-alpine # 버전 고정
     container_name: beszel-agent
     restart: always
     network_mode: host # 호스트 리소스 직접 봐야 해서 host 네트워크로
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro # 도커 컨테이너 사용량 수집용
     devices:
       - /dev/nvme0:/dev/nvme0 # 파티션(nvme0n1)이 아니라 컨트롤러 이름
     cap_add:
@@ -50,14 +52,20 @@ services:
       KEY: "허브에서_발급받은_공개키" # 웹 UI 실행 후 나중에 입력
       TOKEN: "허브에서_발급받은_토큰" # 웹 UI 실행 후 나중에 입력
 
-volumes:
-  beszel_data:
-
 # 허브만 먼저 실행 (KEY/TOKEN 없이 에이전트까지 같이 올리면 재시작 루프에 빠짐)
 docker compose up -d beszel
 ```
 
-폴더 생성, compose까지 만들고 먼저 웹 UI를 열어서 계정을 생성하고 로그인하면 시스템 추가라는 메뉴가 있습니다.
+웹 UI는 `127.0.0.1`에만 열어둬서 파이 안에서만 접속됩니다. 다른 기기에서 보려면 SSH 포워딩으로 연결해주면 됩니다.
+
+```zsh
+# 맥북에서 접속할 경우
+ssh -L 8090:127.0.0.1:8090 사용자명@라즈베리파이IP
+```
+
+이후 `http://localhost:8090` 접속하면 됩니다.
+
+웹 UI에서 계정을 생성하고 로그인하면 시스템 추가라는 메뉴가 있습니다.
 ![Beszel 시스템 추가 버튼](./add-system.webp)
 - 이름 : 마음대로
 - 호스트 / IP : 모니터링할 기기(파이) IP 입력, **localhost** 쓰면 모니터링 안됨
@@ -87,5 +95,7 @@ sudo ufw status numbered
 ```
 
 ![Beszel 사용량 그래프](./setting-done.webp)
+
+Docker 그래프가 비어 있거나 안 보이면 `docker stats --no-stream`에서 메모리가 0으로 나오는지 확인해보면 됩니다. 파이OS는 메모리 cgroup이 기본으로 꺼져 있어서 이 상태에서는 컨테이너 사용량이 수집되지 않습니다. 다음 글의 도커 성능 제한 설정에 있는 `cmdline.txt` 설정 후 재부팅하면 그래프가 나옵니다.
 
 이렇게 모니터링 툴까지 설정이 완료되었습니다. 실시간 모니터링은 아쉽지만 언제 부하가 많이 걸리는지 볼 수 있고, 인터넷이 끊기면 그래프에 공백이 생겨서 인터넷 문제 생기는 경우도 알 수 있어서 나름 괜찮았습니다.

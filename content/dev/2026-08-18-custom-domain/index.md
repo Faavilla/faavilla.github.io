@@ -39,7 +39,7 @@ date: 2026-08-18
 | @ | AAAA | 2606:50c0:8001::153 | off |
 | @ | AAAA | 2606:50c0:8002::153 | off |
 | @ | AAAA | 2606:50c0:8003::153 | off |
-| @ | CNAME | username.github.io | off |
+| www | CNAME | username.github.io | off |
 
 형식이 `A`인것은 ipv4 주소를 가리키고, 형식이 `AAAA`인것은 ipv6 주소를 가리킵니다. 깃허브 페이지 문서에서 둘 다 설정하는걸 권장하고 있어서 입력해두었습니다.
 
