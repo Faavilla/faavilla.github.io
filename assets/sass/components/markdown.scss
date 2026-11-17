@@ -78,6 +78,7 @@ table {
   max-width: max-content;
   margin: 0;
   border-collapse: collapse;
+  overflow-wrap: break-word; /* Keep cell words whole so a wide table scrolls instead */
 
   th {
     padding: 0.4rem;

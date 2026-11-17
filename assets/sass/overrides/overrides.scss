@@ -4,3 +4,10 @@
   outline-offset: 0.19rem;
   border-radius: 0.18rem;
 }
+
+/* .highlight's overflow clips the focused pre's ring, so the wrapper draws it */
+.highlight:has(> pre:focus-visible) {
+  outline: 0.125rem solid var(--color-link);
+  outline-offset: 0.19rem;
+  border-radius: 0.18rem;
+}

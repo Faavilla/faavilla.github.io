@@ -54,6 +54,13 @@ if (colorModeButton) {
   // Applied without saving so system changes can still be followed
   applyTheme(getInitialTheme());
 
+  // Pages restored from the back/forward cache skip this script, so reapply the theme
+  window.addEventListener("pageshow", event => {
+    if (event.persisted) {
+      applyTheme(getInitialTheme());
+    }
+  });
+
   // Follow system changes until the user makes an explicit choice
   darkMedia.addEventListener("change", event => {
     if (getStoredTheme() !== null) {
