@@ -1,4 +1,6 @@
 .header {
+  container-type: inline-size; /* Lets the @container rule at the end react to header width in rem */
+
   /* Drawn as a gradient so the line stays inset from both edges */
   &__line {
     height: 0.13rem;
@@ -106,10 +108,18 @@
       display: contents;
     }
 
+    /* The link is under 24px tall, so extend its tap area downward, away from the brand */
     &__link {
+      position: relative;
       grid-row: 2;
       grid-column: 1 / 4;
       justify-self: center;
+
+      &::before {
+        content: "";
+        position: absolute;
+        inset: 0 0 -0.4rem;
+      }
     }
   }
 
@@ -117,5 +127,12 @@
     grid-row: 1 / 3; /* Span both rows so the button centers on the whole stack */
     grid-column: 3;
     justify-self: end;
+  }
+}
+
+/* Narrow header (e.g. phone zoomed past 200%): toggle drops to the link row; 12.7rem tracks the "Faavilla" width */
+@container (max-width: 12.7rem) {
+  .color-mode-btn {
+    grid-row: 2;
   }
 }
